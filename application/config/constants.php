@@ -36,6 +36,17 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+/*
+|--------------------------------------------------------------------------
+| Users
+|--------------------------------------------------------------------------
+|
+| ...
+|
+*/
+
+define('SUPER_ADMIN_USER', 'superadmin');
+define('SUPER_ADMIN_PASS', 'demo1234');
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
