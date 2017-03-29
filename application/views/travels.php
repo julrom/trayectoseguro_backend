@@ -92,7 +92,7 @@
 				var user = JSON.parse(sessionStorage.getItem("user"));
 				if (user.username == 'superadmin') {
 					$("#companies").show();
-					$("#users").hide();
+					$("#users").show();
 					$("#travels").hide();
 				} else if (user.admin) {
 					$("#companies").hide();
