@@ -16,7 +16,8 @@ class Rcompany extends API_Controller {
 	public function add_post() {
 		$result = $this->company_model->create(
 			$this->post('name'), 
-			$this->post('code')
+			$this->post('code'),
+			$this->post('speed_limit')
 		);
 
 		if ($result === FALSE) {
@@ -30,7 +31,8 @@ class Rcompany extends API_Controller {
 		$result = $this->company_model->update(
 			$this->post('id'), 
 			$this->post('name'),
-			$this->post('code')
+			$this->post('code'),
+			$this->post('speed_limit')
 		);
 
 		if ($result === FALSE) {

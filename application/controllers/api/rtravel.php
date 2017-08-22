@@ -27,14 +27,19 @@ class Rtravel extends API_Controller {
 
 		$answers = $this->json_decode($this->post('answers'));
 		$travel_logs = $this->json_decode($this->post('travel_logs'));
-
-		$travel_id = $this->travel_model->create($user, $answers, $travel_logs);
+		$max_speed = $this->post('max_speed');
+		$average_speed= $this->post('average_speed');
+		$distance = $this->post('distance');
+		$duration = $this->post('duration');
+		
+		$travel_id = $this->travel_model->create($user, $answers, $travel_logs,
+				$max_speed, $average_speed, $distance, $duration);
 
 		if ($travel_id === FALSE) {
 			$this->response_error(404);
 		}
 
-		$result = $this->travellog_model->get_travel_info($travel_id);
+		$result = $this->travel_model->get_travel_by_id($travel_id);
 
 		$this->response_ok($result);
 	}
@@ -78,7 +83,7 @@ class Rtravel extends API_Controller {
 
 		$csv = 'Latitud,Longitud,Fecha' . "\r\n";
 		foreach ($logs as $log) {
-			$csv .= $log->latitude . ',' . $log->latitude . ',' . $log->date . "\r\n";	
+			$csv .= $log->latitude . ',' . $log->longitude . ',' . $log->date . "\r\n";	
 		}
 
 		force_download('travel_logs.csv', $csv);
@@ -95,6 +100,20 @@ class Rtravel extends API_Controller {
 			$this->response_error(404);
 		}
 
+		$this->response_ok($result);
+	}
+	
+	public function list_by_id_get() {
+		if (!$this->get('travel_id')) {
+			$this->response_error(400);
+		}
+		
+		$result = $this->travel_model->get_travel_by_id($this->get('travel_id'));
+		
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+		
 		$this->response_ok($result);
 	}
 }

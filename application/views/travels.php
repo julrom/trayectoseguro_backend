@@ -27,8 +27,12 @@
 			.logout{
 				margin-top: 18px;
 			}
+			ul.navbar-nav > li {
+				display: none;
+			}
 		</style>
-		<title>API Test</title>
+		
+		<title>Trayecto Seguro</title>
 	</head>
 	<body>
 		<div id="app">
@@ -37,7 +41,7 @@
 					<ul class="nav navbar-nav">
 						<li id="companies"><a href="<?php echo base_url('companies/'); ?>">Compañías</a></li> 
 						<li id="users"><a href="<?php echo base_url('users/'); ?>">Usuarios</a></li>
-						<li id="travels" class="active"><a href="<?php echo base_url('travels/'); ?>">Trayectos</a></li> 
+						<li id="travels" class="active"><a href="<?php echo base_url('travels/'); ?>">Trayectos</a></li>
 					</ul>
 					<span class="pull-right logout"><a href="javascript:logout();" style="text-decoration: none; cursor: pointer;">Cerrar Sesión</a></span>
 				</div>	
@@ -84,6 +88,47 @@
 			</div>	
 		</div>
 		
+		
+		<!-- start modal for create / update-->
+		<div class="modal fade" tabindex="-1" id="detail-modal" role="dialog" data-backdrop="static">
+    		<div class="modal-dialog">
+      			<!-- start Modal content-->
+      			<div class="modal-content">
+        			<div class="modal-header">
+          				<h4 class="modal-title" id="title"></h4>
+        			</div>
+        			<div class="modal-body">
+				          	<div class="form-group">
+					            <label for="duration" class="form-control-label">Duración</label>
+					            <span id="duration"></span>
+				          	</div>
+				          	<div class="form-group">
+					            <label for="distance" class="form-control-label">Distancia</label>
+					            <span id="distance"></span>
+				          	</div>
+				          	<div class="form-group">
+					            <label for="average_speed" class="form-control-label">Velocidad promedio</label>
+					            <span id="average_speed"></span>
+				          	</div>
+				          	<div class="form-group">
+					            <label for="max_speed" class="form-control-label">Velocidad máxima</label>
+					            <span id="max_speed"></span>
+				          	</div>
+				          	<div class="form-group">
+					            <label for="speed_limit" class="form-control-label">Límite de velocidad</label>
+					            <span id="speed_limit"></span>
+				          	</div>
+        			</div>
+        			<div class="modal-footer">
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        			</div>
+      			</div>
+      			<!-- Modal content-->
+    		</div>
+  		</div>
+  		<!-- end modal for create / update-->
+		
+		
 		<!-- start own script-->
 		<script>
 			var table;
@@ -93,9 +138,7 @@
 				if (user.username == 'superadmin') {
 					$("#companies").show();
 					$("#users").show();
-					$("#travels").hide();
 				} else if (user.admin) {
-					$("#companies").hide();
 					$("#users").show();
 					$("#travels").show();
 				}
@@ -138,8 +181,9 @@
 	        			{ 	//param active
 	        				targets : [3],
 	          					render : function (data, type, row) {
-	             				return '<i class="glyphicon glyphicon-download-alt icon-action" data-action="download" aria-hidden="true"></i>';
-	          				}
+	             				return '<i class="glyphicon glyphicon-download-alt icon-action" data-action="download" aria-hidden="true"></i>'
+	             				+'&nbsp;&nbsp;<i class="glyphicon glyphicon-eye-open icon-action" data-action="detail" aria-hidden="true" style="color : green"></i>';
+	          					}
 					    }
 					]
 			    });
@@ -149,23 +193,46 @@
 			//To prepare and display modal (edit, activate, deactivate)
 			$('#example').on('click', 'i.icon-action', function (e) {
 		        e.preventDefault();
-		 		var row = $(this).closest('tr');
+
+		        var action = $(this).attr("data-action");
+		        var row = $(this).closest('tr');
 				var id = row.find('td:eq(0)').text();
-    			window.location.href = 'http://trayectoseguro.azurewebsites.net/index.php/api/rtravel/download_logs?travel_id='+id;
+
+		        switch (action){
+					case 'download':
+		    			window.location.href = 'http://trayectoseguro.azurewebsites.net/index.php/api/rtravel/download_logs?travel_id='+id;
+						break;
+					case 'detail':
+						$('#title').empty();
+						$.get('http://trayectoseguro.azurewebsites.net/index.php/api/rtravel/list_by_id?travel_id='+id)
+						.done(function(data) {
+							$('#title').text('ID: '+164 +' Detalle del Trayecto '+data.response.date);
+							$('#duration').text(data.response.duration);
+							$('#distance').text(data.response.distance +' Km');
+							$('#average_speed').text(data.response.average_speed + ' Km/h');
+							$('#max_speed').text(data.response.max_speed + ' Km/h');
+							$('#speed_limit').text(data.response.speed_limit + ' Km/h');
+							$('#detail-modal').modal('show');
+					  	})
+					  	.fail(function(e) {
+					    	console.log(e);
+					  	})
+					  	.always(function() {
+					  		//console.log(JSON.stringify(companies));
+					    	//alert( "finished" );
+						});
+						break;
+				}
+		 		
 
 		    } );
-		
+
 			function logout() {
 				sessionStorage.removeItem("user");
 				window.location.href = '<?php echo base_url('login/'); ?>';
 			}		
 		</script>
 		<!-- end own script -->
-
-
-
-
-
 
 	    <!-- Include all compiled plugins (below), or include individual files as needed -->
 	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

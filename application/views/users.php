@@ -28,8 +28,11 @@
 			.logout{
 				margin-top: 18px;
 			}
+			ul.navbar-nav > li {
+				display: none;
+			}
 		</style>
-		<title>API Test</title>
+		<title>Trayecto Seguro</title>
 	</head>
 	<body>
 		<div id="app">
@@ -38,7 +41,8 @@
 					<ul class="nav navbar-nav">
 						<li id="companies"><a href="<?php echo base_url('companies/'); ?>">Compañías</a></li> 
 						<li id="users" class="active"><a href="<?php echo base_url('users/'); ?>">Usuarios</a></li>
-						<li id="travels"><a href="<?php echo base_url('travels/'); ?>">Trayectos</a></li> 
+						<li id="travels"><a href="<?php echo base_url('travels/'); ?>">Trayectos</a></li>
+						<li id="questions"><a href="<?php echo base_url('questions/'); ?>">Preguntas</a></li>
 					</ul>
 					<span class="pull-right logout"><a href="<?php echo base_url('login/'); ?>" style="text-decoration: none; cursor: pointer;">Cerrar Sesión</a></span>
 				</div>
@@ -173,9 +177,8 @@
 				if (user.username == 'superadmin') {
 					$("#companies").show();
 					$("#users").show();
-					$("#travels").hide();
+					$("#questions").show();
 				} else if (user.admin) {
-					$("#companies").hide();
 					$("#users").show();
 					$("#travels").show();
 				}

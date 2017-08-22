@@ -15,12 +15,17 @@ class Travel_model extends Zyght_Model {
 		$this->load->model('answer_model');
 	}
 
-	public function create($user, $answers, $travel_logs) {
+	public function create($user, $answers, $travel_logs, $max_speed, 
+			$average_speed, $distance, $duration) {
 		$this->db->trans_start();
 
 		$this->db->insert($this->table, array(
 			'user_id' => $user->id,
-			'date' => date('Y-m-d H:i:s')
+			'date' => date('Y-m-d H:i:s'),
+			'max_speed' => $max_speed,
+			'average_speed' => $average_speed,
+			'distance' => $distance,
+			'duration' => $duration
 		));
 
 		$travel_id = $this->db->insert_id();
@@ -41,6 +46,18 @@ class Travel_model extends Zyght_Model {
 		}
 
 		return $travel_id;
+	}
+	
+	
+	public function get_travel_by_id($travel_id){
+		$this->db->select('t.*, c.speed_limit');
+		$this->db->from($this->table.' AS t');
+		$this->db->join('AppUser AS au', 'au.id = t.user_id');
+		$this->db->join('Company AS c', 'c.id = au.company_id');
+		$this->db->where('t.id', $travel_id);
+		$query = $this->db->get();
+		
+		return ($query->num_rows() > 0) ? $query->row() : array();
 	}
 
 	public function get_all_with_user($company_id = '', $user_id = '') {

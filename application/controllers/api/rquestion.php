@@ -13,13 +13,58 @@ class Rquestion extends API_Controller {
 		$this->load->model('question_model');
 	}
 
-	public function list_actives_get() {
-		$result = $this->question_model->get_actives();
+	public function add_post() {
+		$result = $this->question_model->create(
+				$this->post('name')
+				);
+		
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+		
+		$this->response_ok($result);
+	}
+	
+	public function list_get() {
+		$result = $this->question_model->get_all();
 
 		if ($result === FALSE) {
 			$this->response_error(404);
 		}
 
+		$this->response_ok($result);
+	}
+	
+	public function edit_post() {
+		$result = $this->question_model->update(
+				$this->post('id'),
+				$this->post('name')
+				);
+		
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+		
+		$this->response_ok($result);
+	}
+	
+	public function activate_post() {
+		$result = $this->question_model->activate($this->post('id'), 1);
+		
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+		
+		$this->response_ok($result);
+	}
+	
+	public function deactivate_post() {
+		$result = $this->question_model->activate($this->post('id'), 0);
+		
+		if ($result === FALSE) {
+			$this->response_error(404);
+		}
+		
 		$this->response_ok($result);
 	}
 	

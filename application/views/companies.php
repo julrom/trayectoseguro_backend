@@ -30,8 +30,11 @@
 			.userrol {
 				display: none !important;
 			}
+			ul.navbar-nav > li {
+				display: none;
+			}
 		</style>
-		<title>API Test</title>
+		<title>Trayecto Seguro</title>
 	</head>
 	<body>
 		<div id="app">
@@ -40,7 +43,8 @@
 					<ul class="nav navbar-nav">
 						<li id="companies" class="active"><a href="<?php echo base_url('companies/'); ?>">Compañías</a></li> 
 						<li id="users"><a href="<?php echo base_url('users/'); ?>">Usuarios</a></li>
-						<li id="travels"><a href="<?php echo base_url('travels/'); ?>">Trayectos</a></li> 
+						<li id="travels"><a href="<?php echo base_url('travels/'); ?>">Trayectos</a></li>
+						<li id="questions"><a href="<?php echo base_url('questions/'); ?>">Preguntas</a></li>
 					</ul>
 					<span class="pull-right logout"><a href="javascript:logout();" style="text-decoration: none; cursor: pointer;">Cerrar Sesión</a></span>
 				</div>	
@@ -72,6 +76,7 @@
 					                <th>ID</th>
 					                <th>Nombre</th>
 					                <th>Código</th>
+					                <th>Límite de velocidad (km/h)</th>
 					                <th>Estado</th>
 					                <th>Acciones</th>
 					            </tr>
@@ -105,6 +110,10 @@
 				          	<div class="form-group">
 					            <label for="record-code" class="form-control-label">Código</label>
 					            <input type="text" class="form-control" id="record-code" name="record-code">
+				          	</div>
+				          	<div class="form-group">
+					            <label for="record-speed-limit" class="form-control-label">Límite de velocidad</label>
+					            <input type="number" class="form-control" id="record-speed-limit" name="record-speed-limit">
 				          	</div>
 				          	<input type="hidden" id="record-id">
 				        </form>
@@ -150,9 +159,8 @@
 				if (user.username == 'superadmin') {
 					$("#companies").show();
 					$("#users").show();
-					$("#travels").hide();
+					$("#questions").show();
 				} else if (user.admin) {
-					$("#companies").hide();
 					$("#users").show();
 					$("#travels").show();
 				}
@@ -178,6 +186,9 @@
 			            { 
 			            	"data": "code"
 			        	},
+			            { 
+			            	"data": "speed_limit"
+			        	},
 			            { 	
 			            	"data": "active",
 			            },
@@ -192,13 +203,13 @@
 		            
 		            "columnDefs" : [
 	        			{ 	//param active
-	        				targets : [3],
+	        				targets : [4],
 	          					render : function (data, type, row) {
 	             				return data == '1' ? 'Activo' : 'Inactivo';
 	          				}
 					    },
 					    { 	//icons options
-	        				targets : [4],
+	        				targets : [5],
 	          					render : function (data, type, row) {
 	          						var iconSwitch = '&nbsp;&nbsp;<i class="glyphicon glyphicon-off icon-action icon-deactivated" data-action="activate" aria-hidden="true"></i>';
 	          						if(data.active == 1){
@@ -230,7 +241,8 @@
 				var id = row.find('td:eq(0)').text();
 				var name = row.find('td:eq(1)').text();
 				var code = row.find('td:eq(2)').text();
-				var state = row.find('td:eq(3)').text();
+				var speed_limit = row.find('td:eq(3)').text();
+				var state = row.find('td:eq(4)').text();
 				
 				switch (action){
 					case "edit":
@@ -238,6 +250,7 @@
 						$("#record-id").val(id);
 						$("#record-name").val(name);
 						$("#record-code").val(code);
+						$("#record-speed-limit").val(speed_limit);
 						$("#title").text(textEdit);
 						btnAction.text(textEdit);
 						btnAction.attr("data-action", action);
@@ -283,7 +296,8 @@
 		    	var action = $(this).attr("data-action");
 		    	var params = {  
 							"name" :  $("#record-name").val(),
-							"code" : $("#record-code").val()
+							"code" : $("#record-code").val(),
+							"speed_limit" : $("#record-speed-limit").val()
 						};
 				if(action == "edit"){
 					params.id = $("#record-id").val();

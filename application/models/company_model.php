@@ -10,10 +10,11 @@ class Company_model extends Zyght_Model {
 		$this->id = 'id';
 	}
 
-	public function create($name, $code) {
+	public function create($name, $code, $speed_limit) {
 		$this->db->insert($this->table, array(
 			'name' => $name,
 			'code' => $code,
+			'speed_limit' => $speed_limit,
 			'active' => 1
 		));
 
@@ -22,7 +23,7 @@ class Company_model extends Zyght_Model {
 		return ($id > 0) ? $id : FALSE;
 	}
 
-	public function update($id, $name = NULL, $code = NULL) {
+	public function update($id, $name = NULL, $code = NULL, $speed_limit) {
 		$data = array();
 
 		if (isset($name)) {
@@ -31,6 +32,10 @@ class Company_model extends Zyght_Model {
 		
 		if (isset($code)) {
 			$data['code'] = $code;
+		}
+		
+		if(isset($speed_limit)){
+			$data['speed_limit'] = $speed_limit;
 		}
 		
 		if (!empty($data)) {
